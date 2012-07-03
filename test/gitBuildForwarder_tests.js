@@ -29,7 +29,38 @@ describe('gitBuildForwarder(config)', function(){
   });
 
   describe('returned function - parseAndForwardBuild(req, res, next)', function(){
-    it('should callback with error if contained parser calls back with error', function(){
+    beforeEach(function(){
+      this.options = {repositoryType : 'bitBucket'};
+      this.parser = {
+        parseGitPost : sinon.spy()
+      };
+      this.request = {a : "45"};
+
+      this.originalCreateParser = utils.createParserForRepositoryType;
+      utils.createParserForRepositoryType = sinon.stub().withArgs('bitBucket').returns(this.parser);
+
+      this.middelwareFunction = gitBuildForwarder(this.options);
+    });
+    afterEach(function(){
+      utils.createParserForRepositoryType = this.originalCreateParser;
+    });
+    it('should callback with error if contained parser calls back with error', function(done){
+
+      var expectedError = new Error("hey");
+
+      // SHOULD: test that called back with error
+      var next = function(err){
+        err.should.equal(expectedError);
+        done();
+      };
+
+      this.middelwareFunction(this.request, {}, next);
+
+      // sanity check that parseGitPost was called with request
+      this.parser.parseGitPost.calledWith(this.request).should.be.ok;
+
+      // invoke parseGitPost callback function with error
+      this.parser.parseGitPost.firstCall.args[1](expectedError);
     });
     it('should forward builds token for repositories and branches', function(){
     });

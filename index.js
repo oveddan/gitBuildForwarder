@@ -6,7 +6,11 @@ var gitBuildForwarder = function(config){
 
   var repositoryPostParser = utils.createParserForRepositoryType(config.repositoryType);
 
-  return function(){
+  return function(req, res, next){
+    repositoryPostParser.parseGitPost(req, function(err, repositoryAndBranches){
+      if(err)
+        next(err);
+    });
   };
 };
 
