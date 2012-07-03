@@ -40,16 +40,20 @@ describe('gitBuildForwarder(config)', function(){
         }
       };
       this.response = {
-        json : sinon.stub
+        json : sinon.spy()
       };
 
       this.originalCreateParser = utils.createParserForRepositoryType;
       utils.createParserForRepositoryType = sinon.stub().withArgs('bitBucket').returns(this.parser);
 
       this.middlewareFunction = gitBuildForwarder(this.options);
+
+      this.originalforwardBuilds = utils.forwardBuilds;
+      utils.forwardBuilds = sinon.spy();
     });
     afterEach(function(){
       utils.createParserForRepositoryType = this.originalCreateParser;
+      utils.forwardBuilds = this.originalforwardBuilds;
     });
     it('should callback with error if contained parser calls back with error', function(done){
       var expectedError = new Error("hey");
@@ -72,7 +76,6 @@ describe('gitBuildForwarder(config)', function(){
       // setup
       this.middlewareFunction(this.request, this.response, function(){});
 
-      var originalforwardBuilds = utils.forwardBuilds;
       utils.forwardBuilds = sinon.spy();
       var expectedRepositoriesAndBranches = {
         repository : "mainRepo",
@@ -81,11 +84,23 @@ describe('gitBuildForwarder(config)', function(){
       // test by invoking callback from parse git post
       this.parser.parseGitPost.firstCall.args[1](null, expectedRepositoriesAndBranches);
 
+      // should
       utils.forwardBuilds.calledWith(this.request.query.token, expectedRepositoriesAndBranches).should.be.ok;
-      // restore
-      utils.forwardBuilds = originalforwardBuilds;
     });
     it('should callback with json from forwarded builds', function(){
+      // setup
+      this.middlewareFunction(this.request, this.response, function(){});
+
+      // invoke parseGitPost callback with data that is not relevant for this test
+      this.parser.parseGitPost.firstCall.args[1](null, {});
+
+      // get callback from forwardBuilds and invoke with some dummy result
+      var dummyResult = { a: "b"};
+      var callback = utils.forwardBuilds.firstCall.args[2];
+      callback(null, dummyResult);
+      // should
+      this.response.json.calledOnce.should.be.ok;
+      this.response.json.calledWith(dummyResult).should.be.ok;
     });
   });
 

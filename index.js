@@ -12,7 +12,10 @@ var gitBuildForwarder = function(config){
         next(err);
       else {
         utils.forwardBuilds(req.query.token, repositoryAndBranches, function(err, result){
-          
+          if(err)
+            next(err);
+          else
+            res.json(result);
         });
       }
     });
