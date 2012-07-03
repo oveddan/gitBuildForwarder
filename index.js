@@ -10,6 +10,11 @@ var gitBuildForwarder = function(config){
     repositoryPostParser.parseGitPost(req, function(err, repositoryAndBranches){
       if(err)
         next(err);
+      else {
+        utils.forwardBuilds(req.query.token, repositoryAndBranches, function(err, result){
+          
+        });
+      }
     });
   };
 };

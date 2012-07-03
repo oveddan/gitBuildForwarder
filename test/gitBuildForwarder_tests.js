@@ -34,18 +34,24 @@ describe('gitBuildForwarder(config)', function(){
       this.parser = {
         parseGitPost : sinon.spy()
       };
-      this.request = {a : "45"};
+      this.request = {
+        query : {
+          token : '1234'
+        }
+      };
+      this.response = {
+        json : sinon.stub
+      };
 
       this.originalCreateParser = utils.createParserForRepositoryType;
       utils.createParserForRepositoryType = sinon.stub().withArgs('bitBucket').returns(this.parser);
 
-      this.middelwareFunction = gitBuildForwarder(this.options);
+      this.middlewareFunction = gitBuildForwarder(this.options);
     });
     afterEach(function(){
       utils.createParserForRepositoryType = this.originalCreateParser;
     });
     it('should callback with error if contained parser calls back with error', function(done){
-
       var expectedError = new Error("hey");
 
       // SHOULD: test that called back with error
@@ -54,7 +60,7 @@ describe('gitBuildForwarder(config)', function(){
         done();
       };
 
-      this.middelwareFunction(this.request, {}, next);
+      this.middlewareFunction(this.request, {}, next);
 
       // sanity check that parseGitPost was called with request
       this.parser.parseGitPost.calledWith(this.request).should.be.ok;
@@ -63,6 +69,21 @@ describe('gitBuildForwarder(config)', function(){
       this.parser.parseGitPost.firstCall.args[1](expectedError);
     });
     it('should forward builds token for repositories and branches', function(){
+      // setup
+      this.middlewareFunction(this.request, this.response, function(){});
+
+      var originalforwardBuilds = utils.forwardBuilds;
+      utils.forwardBuilds = sinon.spy();
+      var expectedRepositoriesAndBranches = {
+        repository : "mainRepo",
+        branches: ["master", "staging"]
+      };
+      // test by invoking callback from parse git post
+      this.parser.parseGitPost.firstCall.args[1](null, expectedRepositoriesAndBranches);
+
+      utils.forwardBuilds.calledWith(this.request.query.token, expectedRepositoriesAndBranches).should.be.ok;
+      // restore
+      utils.forwardBuilds = originalforwardBuilds;
     });
     it('should callback with json from forwarded builds', function(){
     });
