@@ -74,6 +74,12 @@ describe('forwardBuild(token, repositoryAndBranch, callback)', function(){
       }
     };
     this.buildForwarder = new BuildForwarder(this.buildUrlsForBranches);
+
+    this.originalcallBuildUrl = BuildForwarder.callBuildUrl;
+    BuildForwarder.callBuildUrl = sinon.spy();
+  });
+  afterEach(function(){
+    BuildForwarder.callBuildUrl = this.originalcallBuildUrl;
   });
   it("should callback with 'No build configured for repository and branch' if repository not configured", function(done){
     // test with valid repo but bad branch
@@ -90,9 +96,28 @@ describe('forwardBuild(token, repositoryAndBranch, callback)', function(){
     });
   });
   it('should invoke a request on forwarded url with token if can be found', function(){
+    // test
+    this.buildForwarder.forwardBuild('4422', 'library', 'master', function(){});
 
+    // should
+    var buildUrlForBranch = this.buildUrlsForBranches.library.master;
+    BuildForwarder.callBuildUrl.calledWith(buildUrlForBranch, '4422').should.be.ok;
   });
-  it("should callback with 'forwarded' and response if can be found", function(){
+  it("should callback with 'forwarded' and response if can be found", function(done){
+    var expectedResponse = { body : 'thanks for building!!!!!! :)'};
+    var callback = function(err, branchResult){
+      branchResult.should.equal('forwarded with response : ' + expectedResponse.body);
+      // should
+      done();
+    };
 
+    // setup
+    this.buildForwarder.forwardBuild('4422', 'library', 'master', callback);
+    // get callback from callBuildUrl and invoke it
+
+    var callBuildCallback = BuildForwarder.callBuildUrl.firstCall.args[2];
+    callBuildCallback.should.be.a('function');
+    // test
+    callBuildCallback(null, expectedResponse);
   });
 });

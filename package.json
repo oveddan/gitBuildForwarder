@@ -5,6 +5,7 @@
   , "private": false
   , "dependencies": {
     "async": "0.1.22"
+  , "superagent" : "0.4.1"
   }
     ,"devDependencies": {
     "mocha" : "1.0.3"
