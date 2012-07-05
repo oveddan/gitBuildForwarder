@@ -24,12 +24,13 @@ describe('utils', function(){
       // test
       utils.forwardBuilds('1234', repositoryAndBranches, function(){});
 
-      //console.log(utils.forwardBuild);
+      // get each callback and invoke it
+      utils.forwardBuild.firstCall.args[3](null, {});
+      utils.forwardBuild.secondCall.args[3](null, {});
+      utils.forwardBuild.thirdCall.args[3](null, {});
 
       // should
       for(var i = 0; i < repositoryAndBranches.branches.length; i++){
-        //console.log(i);
-        //console.log(repositoryAndBranches.branches[i]);
         utils.forwardBuild.calledWith('1234', repositoryAndBranches.repository, repositoryAndBranches.branches[i]).should.be.ok;
       }
 
