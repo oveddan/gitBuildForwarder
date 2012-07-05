@@ -24,9 +24,12 @@ describe('utils', function(){
       // test
       utils.forwardBuilds('1234', repositoryAndBranches, function(){});
 
+      //console.log(utils.forwardBuild);
+
       // should
       for(var i = 0; i < repositoryAndBranches.branches.length; i++){
-        console.log(utils.forwardBuild);
+        //console.log(i);
+        //console.log(repositoryAndBranches.branches[i]);
         utils.forwardBuild.calledWith('1234', repositoryAndBranches.repository, repositoryAndBranches.branches[i]).should.be.ok;
       }
 
@@ -49,7 +52,7 @@ describe('utils', function(){
           master : results[1],
           dev : results[2]
         }
-      }
+      };
 
       var callback = function(err, data){
         data.should.eql(expectedCalledBackData);
@@ -57,7 +60,7 @@ describe('utils', function(){
       };
 
       // test
-      utils.forwardBuilds('1234', repositoryAndBranches, function(){});
+      utils.forwardBuilds('1234', repositoryAndBranches, callback);
 
       // get each callback and invoke it with result
       utils.forwardBuild.firstCall.args[3](null, results[0]);

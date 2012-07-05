@@ -4,6 +4,7 @@
   , "version": "0.0.1"
   , "private": false
   , "dependencies": {
+    "step": "0.0.5"
   }
     ,"devDependencies": {
     "mocha" : "1.0.3"
