@@ -1,7 +1,8 @@
 var should = require('chai').should()
   , sinon = require('sinon')
   , gitBuildForwarder = require('../index')
-  , utils = require('../lib/utils');
+  , utils = require('../lib/utils')
+  , BuildForwarder = require('../lib/BuildForwarder');
 
 
 describe('gitBuildForwarder(config)', function(){
@@ -46,14 +47,28 @@ describe('gitBuildForwarder(config)', function(){
       this.originalCreateParser = utils.createParserForRepositoryType;
       utils.createParserForRepositoryType = sinon.stub().withArgs('bitBucket').returns(this.parser);
 
-      this.middlewareFunction = gitBuildForwarder(this.options);
+      this.BuildForwarder = {
+        forwardBuilds : sinon.spy()
+      };
 
-      this.originalforwardBuilds = utils.forwardBuilds;
-      utils.forwardBuilds = sinon.spy();
+      this.originalBuildForwarder = BuildForwarder;
+
+      var self = this;
+      this.buildForwarderStub = sinon.stub(BuildForwarder, "constructor", function(){
+        return self.BuildForwarder;
+      });
+
+
+      console.log('in test:');
+      console.log(BuildForwarder.constructor);
+
+      this.middlewareFunction = gitBuildForwarder(this.options);
     });
     afterEach(function(){
       utils.createParserForRepositoryType = this.originalCreateParser;
-      utils.forwardBuilds = this.originalforwardBuilds;
+
+
+      this.buildForwarderStub.restore();
     });
     it('should callback with error if contained parser calls back with error', function(done){
       var expectedError = new Error("hey");
@@ -76,7 +91,6 @@ describe('gitBuildForwarder(config)', function(){
       // setup
       this.middlewareFunction(this.request, this.response, function(){});
 
-      utils.forwardBuilds = sinon.spy();
       var expectedRepositoriesAndBranches = {
         repository : "mainRepo",
         branches: ["master", "staging"]
@@ -84,8 +98,10 @@ describe('gitBuildForwarder(config)', function(){
       // test by invoking callback from parse git post
       this.parser.parseGitPost.firstCall.args[1](null, expectedRepositoriesAndBranches);
 
+
+      console.log(this.BuildForwarder.forwardBuilds);
       // should
-      utils.forwardBuilds.calledWith(this.request.query.token, expectedRepositoriesAndBranches).should.be.ok;
+      this.BuildForwarder.forwardBuilds.calledWith(this.request.query.token, expectedRepositoriesAndBranches).should.be.ok;
     });
     it('should callback with json from forwarded builds', function(){
       // setup
@@ -96,7 +112,7 @@ describe('gitBuildForwarder(config)', function(){
 
       // get callback from forwardBuilds and invoke with some dummy result
       var dummyResult = { a: "b"};
-      var callback = utils.forwardBuilds.firstCall.args[2];
+      var callback = this.BuildForwarder.firstCall.args[2];
       callback(null, dummyResult);
       // should
       this.response.json.calledOnce.should.be.ok;

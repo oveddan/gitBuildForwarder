@@ -1,4 +1,5 @@
-var utils = require('./lib/utils');
+var utils = require('./lib/utils')
+  , BuildForwarder = require('./lib/BuildForwarder');
 
 var gitBuildForwarder = function(config){
   if(!config)
@@ -6,12 +7,21 @@ var gitBuildForwarder = function(config){
 
   var repositoryPostParser = utils.createParserForRepositoryType(config.repositoryType);
 
+
+  console.log('in parser:');
+  console.log(BuildForwarder.prototype.constructor);
+
+  var buildForwarder = new BuildForwarder(config.buildUrlsForBranches);
+
+  console.log('assigned forwarder');
+  console.log(buildForwarder);
+
   return function(req, res, next){
-    repositoryPostParser.parseGitPost(req, function(err, repositoryAndBranches){
+    repositoryPostParser.parseGitPost(req, function(err, repositoryAndBranchesToForward){
       if(err)
         next(err);
       else {
-        utils.forwardBuilds(req.query.token, repositoryAndBranches, function(err, result){
+        buildForwarder.forwardBuilds(req.query.token, repositoryAndBranchesToForward, function(err, result){
           if(err)
             next(err);
           else
