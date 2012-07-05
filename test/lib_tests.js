@@ -16,7 +16,6 @@ describe('utils', function(){
 describe('bitBucketPostParser', function(){
   describe('parseGitPost(req, callback)', function(){
     it('should callback with error if req.body is null', function(){
-
     });
     it('should callback with error if req.body.commits is null or not an array', function(){
 
