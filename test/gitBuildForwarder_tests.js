@@ -51,24 +51,16 @@ describe('gitBuildForwarder(config)', function(){
         forwardBuilds : sinon.spy()
       };
 
-      this.originalBuildForwarder = BuildForwarder;
+      this.originalCreateBuildForwarder = utils.createBuildForwarder;
 
-      var self = this;
-      this.buildForwarderStub = sinon.stub(BuildForwarder, "constructor", function(){
-        return self.BuildForwarder;
-      });
-
-
-      console.log('in test:');
-      console.log(BuildForwarder.constructor);
+      utils.createBuildForwarder = sinon.stub().returns(this.BuildForwarder);
 
       this.middlewareFunction = gitBuildForwarder(this.options);
     });
     afterEach(function(){
       utils.createParserForRepositoryType = this.originalCreateParser;
 
-
-      this.buildForwarderStub.restore();
+      utils.createBuildForwarder = this.originalCreateBuildForwarder;
     });
     it('should callback with error if contained parser calls back with error', function(done){
       var expectedError = new Error("hey");
@@ -98,8 +90,6 @@ describe('gitBuildForwarder(config)', function(){
       // test by invoking callback from parse git post
       this.parser.parseGitPost.firstCall.args[1](null, expectedRepositoriesAndBranches);
 
-
-      console.log(this.BuildForwarder.forwardBuilds);
       // should
       this.BuildForwarder.forwardBuilds.calledWith(this.request.query.token, expectedRepositoriesAndBranches).should.be.ok;
     });
@@ -112,7 +102,7 @@ describe('gitBuildForwarder(config)', function(){
 
       // get callback from forwardBuilds and invoke with some dummy result
       var dummyResult = { a: "b"};
-      var callback = this.BuildForwarder.firstCall.args[2];
+      var callback = this.BuildForwarder.forwardBuilds.firstCall.args[2];
       callback(null, dummyResult);
       // should
       this.response.json.calledOnce.should.be.ok;

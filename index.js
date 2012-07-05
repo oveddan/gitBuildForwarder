@@ -1,20 +1,11 @@
-var utils = require('./lib/utils')
-  , BuildForwarder = require('./lib/BuildForwarder');
+var utils = require('./lib/utils');
 
 var gitBuildForwarder = function(config){
   if(!config)
     throw new Error('config cannot be null');
 
-  var repositoryPostParser = utils.createParserForRepositoryType(config.repositoryType);
-
-
-  console.log('in parser:');
-  console.log(BuildForwarder.prototype.constructor);
-
-  var buildForwarder = new BuildForwarder(config.buildUrlsForBranches);
-
-  console.log('assigned forwarder');
-  console.log(buildForwarder);
+  var repositoryPostParser = utils.createParserForRepositoryType(config.repositoryType),
+    buildForwarder = utils.createBuildForwarder(config.buildUrlsForBranches);
 
   return function(req, res, next){
     repositoryPostParser.parseGitPost(req, function(err, repositoryAndBranchesToForward){
