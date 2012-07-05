@@ -62,12 +62,32 @@ describe('forwardBuilds(token, repositoryAndBranches, callback)', function(){
 
 describe('forwardBuild(token, repositoryAndBranch, callback)', function(){
   beforeEach(function(){
-    this.config = {
-
+    this.buildUrlsForBranches = {
+      site : {
+        master : 'http://jenkins.fun.com/site/master/build',
+        dev : 'http://www.jenkins.com/site/dev/build',
+        staging : 'http://jenkins.you.me/site/stagin/build'
+      },
+      library : {
+        master : 'http://jenkins.fun.com/library/master/build',
+        staging : 'http://jenkins.you.me/library/stagin/build'
+      }
     };
+    this.buildForwarder = new BuildForwarder(this.buildUrlsForBranches);
   });
-  it("should callback with 'No build for branch' if forwarded url cannot be found", function(){
-
+  it("should callback with 'No build configured for repository and branch' if repository not configured", function(done){
+    // test with valid repo but bad branch
+    this.buildForwarder.forwardBuild('1234444', 'site', 'production', function(err, result){
+      result.should.equal('No build configured for repository and branch');
+      done();
+    });
+  });
+  it("should callback with 'No build configured for repository and branch' if branch not configured", function(done){
+    // test with invalid repo
+    this.buildForwarder.forwardBuild('1234444', 'site97', 'master', function(err, result){
+      result.should.equal('No build configured for repository and branch');
+      done();
+    });
   });
   it('should invoke a request on forwarded url with token if can be found', function(){
 
