@@ -12,15 +12,29 @@ var gitBuildForwarder = function(config){
       if(err)
         next(err);
       else {
-        buildForwarder.forwardBuilds(req.query.token, repositoryAndBranchesToForward, function(err, result){
+        var token = parseToken(req);
+        buildForwarder.forwardBuilds(token, repositoryAndBranchesToForward, function(err, result){
           if(err)
             next(err);
           else
-            res.json(result);
+            res.writeHead(200, {
+              'Content-Type' : 'text/json'
+            });
+            res.write(result.toString());
+            res.end();
         });
       }
     });
   };
 };
+
+var parseToken = function(request){
+  if(!request)
+    throw new Error('request is null');
+  if(!request.query)
+    throw new Error("Query has not been parsed.  Please make sure to use the middleware connect.query, " +
+      "as specified in http://www.senchalabs.org/connect/query.html");
+  return request.query.token;
+}
 
 module.exports = gitBuildForwarder;

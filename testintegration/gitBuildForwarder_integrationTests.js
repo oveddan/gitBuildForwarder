@@ -8,6 +8,7 @@ describe('gitBuildForwarder', function(){
   it('should forward build to correct url', function(done){
     // create express app to cimulate CI app that listens on forwarded url
     var fakeCiApp = express.createServer();
+
     var token = '1231321'
 
     var masterBranchBuilt = false,
@@ -15,13 +16,16 @@ describe('gitBuildForwarder', function(){
 
     // app will listen for build on library branch master, and send token back
     fakeCiApp.get('/library/master', function(req, res){
-      req.query.token.should.be(token);
+      console.log('building master');
+      req.query.token.should.equal(token);
       masterBranchBuilt = true;
       res.send(token);
     });
+
     // app will listen for build on library branch staging, and send token back
     fakeCiApp.get('/library/staging', function(req, res){
-      req.query.token.should.be(token);
+      console.log('building staging');
+      req.query.token.should.equal(token);
       stagingBranchBuilt = true;
       res.send(token);
     });
@@ -45,6 +49,7 @@ describe('gitBuildForwarder', function(){
     };
 
     var gitBuildForwarderApp = connect()
+      .use(connect.query())
       .use(connect.bodyParser())
       .use(gitBuildForwarder(config))
       .listen(3001);
@@ -57,7 +62,7 @@ describe('gitBuildForwarder', function(){
           branch: "master"
         },
         {
-          branch: "stagin"
+          branch: "staging"
         }
       ],
       "repository": {
@@ -69,9 +74,8 @@ describe('gitBuildForwarder', function(){
     request.post("http://localhost:3001?token=" + token)
       .send(fakeBitBucketPost)
       .end(function(response){
-        console.log(response);
-        masterBranchBuilt.should.be(true);
-        stagingBranchBuilt.should.be(true);
+        masterBranchBuilt.should.equal(true);
+        stagingBranchBuilt.should.equal(true);
         done();
       });
 

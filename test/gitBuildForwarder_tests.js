@@ -41,7 +41,9 @@ describe('gitBuildForwarder(config)', function(){
         }
       };
       this.response = {
-        json : sinon.spy()
+        write : sinon.spy(),
+        writeHead : sinon.spy(),
+        end : sinon.spy()
       };
 
       this.originalCreateParser = utils.createParserForRepositoryType;
@@ -105,8 +107,8 @@ describe('gitBuildForwarder(config)', function(){
       var callback = this.BuildForwarder.forwardBuilds.firstCall.args[2];
       callback(null, dummyResult);
       // should
-      this.response.json.calledOnce.should.be.ok;
-      this.response.json.calledWith(dummyResult).should.be.ok;
+      this.response.write.calledOnce.should.be.ok;
+      this.response.write.calledWith(dummyResult.toString()).should.be.ok;
     });
   });
 });
