@@ -109,8 +109,8 @@ describe('gitBuildForwarder(config)', function(){
       // test
       callback(null, dummyResult);
       // should
-      this.response.write.calledOnce.should.be.ok;
-      this.response.write.calledWith(dummyResult.toString()).should.be.ok;
+      this.response.end.calledOnce.should.be.ok;
+      this.response.end.calledWith(dummyResult.toString()).should.be.ok;
     });
   });
 });

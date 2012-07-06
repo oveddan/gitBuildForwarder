@@ -68,5 +68,39 @@ describe('bitBucketPostParser', function(){
         done();
       });
     });
+    it('should callback with branch names as a set, with a branch name appearing at most one time, ' +
+      'even if more than one commit is posted for a branch', function(done){
+      // setup - create a request with multiple commits per branch
+      var validRequest = {
+        body : {
+          commits : [
+            { id : '1231231321',
+              branch : 'dev'},
+            { branch : 'staging'},
+            // create another commit in the dev branch
+            { id : '12312333333',
+              branch : 'dev'},
+            { branch : 'production'},
+            // create another commit in the production branch
+            { branch : 'production'}
+          ],
+          repository : {
+            name : 'your-company.site'
+          }
+        }
+      };
+
+      var expectedResult = {
+        repository : validRequest.body.repository.name,
+        branches: ["dev", "staging", "production"]
+      };
+
+      // test
+      gitPostParsers.bitBucket.parseGitPost(validRequest, function(err, result){
+        // should
+        result.should.eql(expectedResult);
+        done();
+      });
+    })
   });
 });
