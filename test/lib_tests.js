@@ -45,6 +45,21 @@ describe('bitBucketPostParser', function(){
            done();
         });
     });
+    it('should callback with error if JSON.parse of payload throws an error', function(done){
+      var badRequest = {
+          body : {
+              payload : "asdfasdf {:sadfsaadf} 12321"
+          }
+        };
+
+        // test
+        gitPostParsers.bitBucket.parseGitPost(badRequest, function(err, result){
+          // should
+          err.should.not.beNull;
+          err.message.should.eql('bad json in payload : ' + badRequest.body.payload);
+          done();
+        });
+    });
     it('should callback with repository name and array of branches', function(done){
       var payloadBody = {
         commits : [
@@ -112,6 +127,6 @@ describe('bitBucketPostParser', function(){
         result.should.eql(expectedResult);
         done();
       });
-    })
+    });
   });
 });
