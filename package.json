@@ -1,5 +1,5 @@
 {
-  "name": "gitBuildForwarder"
+  "name": "git-build-forwarder"
   , "version": "0.0.1"
   , "description": "Forwards builds from post-receive hooks based on the committed branch"
   , "author": {
