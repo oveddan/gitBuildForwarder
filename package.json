@@ -1,8 +1,11 @@
 {
-    "name": "buildgitbranch"
-  , "author": "Dan Oved"
+  "name": "gitBuildForwarder"
   , "version": "0.0.1"
-  , "private": false
+  , "description": "Forwards builds from post-receive hooks based on the committed branch"
+  , "author": {
+    "name": "Dan Oved",
+    "email": "stangogh@gmail.com"
+  }
   , "dependencies": {
     "async": "0.1.22"
   , "superagent" : "0.4.1"
