@@ -104,9 +104,9 @@ describe('forwardBuild(token, repositoryAndBranch, callback)', function(){
     BuildForwarder.callBuildUrl.calledWith(buildUrlForBranch, '4422').should.be.ok;
   });
   it("should callback with 'forwarded' and response if can be found", function(done){
-    var expectedResponse = { body : 'thanks for building!!!!!! :)'};
+    var expectedResponse = { body : "thanks for building!!!!!! :)"};
     var callback = function(err, branchResult){
-      branchResult.should.equal('forwarded with response : ' + expectedResponse.body);
+      branchResult.should.eql({ 'forwarded with response' : expectedResponse.body});
       // should
       done();
     };

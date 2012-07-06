@@ -110,7 +110,7 @@ describe('gitBuildForwarder(config)', function(){
       callback(null, dummyResult);
       // should
       this.response.end.calledOnce.should.be.ok;
-      this.response.end.calledWith(dummyResult.toString()).should.be.ok;
+      this.response.end.firstCall.args[0].should.eql(JSON.stringify(dummyResult));
     });
   });
 });

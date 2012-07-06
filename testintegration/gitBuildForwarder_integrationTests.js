@@ -53,7 +53,8 @@ describe('gitBuildForwarder', function(){
     var gitBuildForwarderApp = connect()
       .use(connect.query())
       .use(connect.bodyParser())
-      .use(gitBuildForwarder(config))
+      // use middleware, and pass console.log so we can see the output
+      .use(gitBuildForwarder(config, console.log))
       .listen(3001);
 
     // create bitBucket git post to forwarding app

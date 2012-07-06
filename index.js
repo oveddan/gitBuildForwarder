@@ -1,6 +1,6 @@
 var utils = require('./lib/utils');
 
-var gitBuildForwarder = function(config){
+var gitBuildForwarder = function(config, loggingFunction){
   if(!config)
     throw new Error('config cannot be null');
 
@@ -8,6 +8,9 @@ var gitBuildForwarder = function(config){
     buildForwarder = utils.createBuildForwarder(config.buildUrlsForBranches);
 
   return function(req, res, next){
+    if(loggingFunction)
+      logRequest(req, loggingFunction);
+
     repositoryPostParser.parseGitPost(req, function(err, repositoryAndBranchesToForward){
       if(err)
         next(err);
@@ -20,12 +23,25 @@ var gitBuildForwarder = function(config){
             res.writeHead(200, {
               'Content-Type' : 'text/json'
             });
-            res.end(result.toString());
+            var resultJson = JSON.stringify(result);
+            if(loggingFunction){
+              loggingFunction('result of forwarded builds:');
+              loggingFunction(resultJson);
+            }
+
+            res.end(resultJson);
         });
       }
     });
   };
 };
+
+var logRequest = function(request, loggingFunction){
+  if(request && request.body && loggingFunction){
+    loggingFunction('received request with body:');
+    loggingFunction(request.body);
+  }
+}
 
 var parseToken = function(request){
   if(!request)
