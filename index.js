@@ -20,8 +20,7 @@ var gitBuildForwarder = function(config){
             res.writeHead(200, {
               'Content-Type' : 'text/json'
             });
-            res.write(result.toString());
-            res.end();
+            res.end(result.toString());
         });
       }
     });

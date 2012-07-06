@@ -78,10 +78,11 @@ describe('gitBuildForwarder(config)', function(){
       // sanity check that parseGitPost was called with request
       this.parser.parseGitPost.calledWith(this.request).should.be.ok;
 
+      // test
       // invoke parseGitPost callback function with error
       this.parser.parseGitPost.firstCall.args[1](expectedError);
     });
-    it('should forward builds token for repositories and branches', function(){
+    it('should forward builds with token, repositories, and branches', function(){
       // setup
       this.middlewareFunction(this.request, this.response, function(){});
 
@@ -105,6 +106,7 @@ describe('gitBuildForwarder(config)', function(){
       // get callback from forwardBuilds and invoke with some dummy result
       var dummyResult = { a: "b"};
       var callback = this.BuildForwarder.forwardBuilds.firstCall.args[2];
+      // test
       callback(null, dummyResult);
       // should
       this.response.write.calledOnce.should.be.ok;

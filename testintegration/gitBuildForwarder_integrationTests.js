@@ -6,7 +6,8 @@ var should = require('chai').should(),
 
 describe('gitBuildForwarder', function(){
   it('should forward build to correct url', function(done){
-    // create express app to cimulate CI app that listens on forwarded url
+    // setup
+    // create express app to cimulate CI app that listens on forwarded urls
     var fakeCiApp = express.createServer();
 
     var token = '1231321'
@@ -16,18 +17,16 @@ describe('gitBuildForwarder', function(){
 
     // app will listen for build on library branch master, and send token back
     fakeCiApp.get('/library/master', function(req, res){
-      console.log('building master');
       req.query.token.should.equal(token);
       masterBranchBuilt = true;
-      res.send(token);
+      res.end(token);
     });
 
     // app will listen for build on library branch staging, and send token back
     fakeCiApp.get('/library/staging', function(req, res){
-      console.log('building staging');
       req.query.token.should.equal(token);
       stagingBranchBuilt = true;
-      res.send(token);
+      res.end(token);
     });
 
     fakeCiApp.listen(3000);
@@ -36,10 +35,12 @@ describe('gitBuildForwarder', function(){
     var config = {
       repositoryType : 'bitBucket',
       buildUrlsForBranches : {
+        // respository : site
         site : {
           master : "http://localhost:3000/site/master",
           dev : "http://localhost:3000/site/dev"
         },
+        // respository : yourCompany.library
         "yourCompany.library" : {
           master : "http://localhost:3000/library/master",
           branchA : "http://localhost:3000/library/branchA",
@@ -48,13 +49,14 @@ describe('gitBuildForwarder', function(){
       }
     };
 
+    // create app with gitBuildForwarder connect middleware
     var gitBuildForwarderApp = connect()
       .use(connect.query())
       .use(connect.bodyParser())
       .use(gitBuildForwarder(config))
       .listen(3001);
 
-    // post to forwarding app
+    // create bitBucket git post to forwarding app
     var fakeBitBucketPost =
     {
       commits: [
@@ -71,9 +73,11 @@ describe('gitBuildForwarder', function(){
       "user": "marcus"
     };
 
+    // test
     request.post("http://localhost:3001?token=" + token)
       .send(fakeBitBucketPost)
       .end(function(response){
+        // should
         masterBranchBuilt.should.equal(true);
         stagingBranchBuilt.should.equal(true);
         done();
