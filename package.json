@@ -1,17 +1,20 @@
 {
-  "name": "git-build-forwarder"
-  , "version": "0.0.1"
-  , "description": "Forwards builds from post-receive hooks based on the committed branch"
-  , "author": {
+  "name": "git-build-forwarder",
+  "version": "0.0.1",
+  "description": "Forwards builds from post-receive hooks based on the committed branch",
+  "author": {
     "name": "Dan Oved",
     "email": "stangogh@gmail.com"
-  }
-  , "dependencies": {
-    "async": "0.1.22"
-  , "superagent" : "0.4.1"
-  }
-    ,"devDependencies": {
-
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/oveddan/gitBuildForwarder.git"
+  },
+  "dependencies": {
+    "async": "0.1.22",
+    "superagent" : "0.4.1"
+  },
+  "devDependencies": {
     "mocha" : "1.0.3"
     ,"sinon" : "1.3.4"
     ,"chai" : "1.0.3"
