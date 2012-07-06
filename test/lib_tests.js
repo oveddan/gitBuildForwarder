@@ -29,11 +29,14 @@ describe('bitBucketPostParser', function(){
     });
     it('should callback with error if repository or repository.name is null', function(done){
       gitPostParsers.bitBucket.parseGitPost({
-        body :
-          { commits : [],
-          repository : {
-            name : null
-          }}
+        body : {
+            payload : {
+              commits : [],
+              repository : {
+                name : null
+              }
+            }
+          }
         },
         function(err, result){
            err.should.not.beNull;
@@ -45,19 +48,21 @@ describe('bitBucketPostParser', function(){
       // setup
       var validRequest = {
         body : {
-          commits : [
-            { branch : 'master'},
-            { branch : 'staging'},
-            { branch : 'production'}
-          ],
-          repository : {
-            name : 'your-company.site'
+          payload : {
+            commits : [
+              { branch : 'master'},
+              { branch : 'staging'},
+              { branch : 'production'}
+            ],
+            repository : {
+              name : 'your-company.site'
+            }
           }
         }
       };
 
       var expectedResult = {
-        repository : validRequest.body.repository.name,
+        repository : validRequest.body.payload.repository.name,
         branches: ["master", "staging", "production"]
       };
 
@@ -73,25 +78,27 @@ describe('bitBucketPostParser', function(){
       // setup - create a request with multiple commits per branch
       var validRequest = {
         body : {
-          commits : [
-            { id : '1231231321',
-              branch : 'dev'},
-            { branch : 'staging'},
-            // create another commit in the dev branch
-            { id : '12312333333',
-              branch : 'dev'},
-            { branch : 'production'},
-            // create another commit in the production branch
-            { branch : 'production'}
-          ],
-          repository : {
-            name : 'your-company.site'
+          payload : {
+            commits : [
+              { id : '1231231321',
+                branch : 'dev'},
+              { branch : 'staging'},
+              // create another commit in the dev branch
+              { id : '12312333333',
+                branch : 'dev'},
+              { branch : 'production'},
+              // create another commit in the production branch
+              { branch : 'production'}
+            ],
+            repository : {
+              name : 'your-company.site'
+            }
           }
         }
       };
 
       var expectedResult = {
-        repository : validRequest.body.repository.name,
+        repository : validRequest.body.payload.repository.name,
         branches: ["dev", "staging", "production"]
       };
 

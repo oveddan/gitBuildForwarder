@@ -60,18 +60,20 @@ describe('gitBuildForwarder', function(){
     // create bitBucket git post to forwarding app
     var fakeBitBucketPost =
     {
-      commits: [
-        {
-          branch: "master"
+      payload : {
+        commits: [
+          {
+            branch: "master"
+          },
+          {
+            branch: "staging"
+          }
+        ],
+        "repository": {
+          "name": "yourCompany.library"
         },
-        {
-          branch: "staging"
-        }
-      ],
-      "repository": {
-        "name": "yourCompany.library"
-      },
-      "user": "marcus"
+        "user": "marcus"
+      }
     };
 
     // test
