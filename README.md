@@ -1,6 +1,6 @@
 # gitBuildForwarder
 
-  Forwards commits to continuous integration servers based on the branchs that were committed to
+  Triggers branch-specific builds on continuous integration servers when corresponding branches in a git repository are committed to.
 
 ## Overview
 
