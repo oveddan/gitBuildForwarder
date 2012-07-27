@@ -1,4 +1,4 @@
-# gitBuildForwarder
+# gitBuildForwarder [![Build Status](https://secure.travis-ci.org/oveddan/gitBuildForwarder.png)](http://travis-ci.org/oveddan/gitBuildForwarder)
 
   Triggers branch-specific builds on continuous integration servers when corresponding branches in a git repository are committed to.
 
