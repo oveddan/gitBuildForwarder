@@ -1,18 +1,18 @@
 # gitBuildForwarder
 
-	Forwards commits to continuous integration servers based on the branchs that were committed to
+  Forwards commits to continuous integration servers based on the branchs that were committed to
 
 ## Overview
 
-	With Github and Bitbucket standard integrations with CI servers, there is no option to trigger a specific build when a specific branch is committed to; builds can only be triggered when the repository is committed to. This prevents the abilitity to have branch specific build jobs that get automatically triggered when code is committed to the corresponding branch. 
+  With Github and Bitbucket standard integrations with CI servers, there is no option to trigger a specific build when a specific branch is committed to; builds can only be triggered when the repository is committed to. This prevents the abilitity to have branch specific build jobs that get automatically triggered when code is committed to the corresponding branch. 
 
-	The gitBuildForwarder is a lightweight Node.js module that accepts posts from from bitbucket when code is committed, determine which repository and branch were committed to, and based on that will trigger the corresponding build(s) on the continuous integration server for the branch(es) that were committted to.
+  The gitBuildForwarder is a lightweight Node.js module that accepts posts from from bitbucket when code is committed, determine which repository and branch were committed to, and based on that will trigger the corresponding build(s) on the continuous integration server for the branch(es) that were committted to.
 
-	In the future, this will also work with Github repositories.
+  In the future, this will also work with Github repositories.
 
 ## Setup
 
-	The best way to see how to setup an app is to look at the integration tests.
+The best way to see how to setup an app is to look at the integration tests.
 
 ## Running tests
 
