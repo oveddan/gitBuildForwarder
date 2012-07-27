@@ -20,5 +20,8 @@
     ,"chai" : "1.0.3"
     ,"connect": "1.8.x"
     ,"express": "2.5.2"
+  },
+  "scripts": {
+    "test": "make test"
   }
 }
